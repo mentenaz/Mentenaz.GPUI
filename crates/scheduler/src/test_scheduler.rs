@@ -57,7 +57,7 @@ impl TestScheduler {
             .map(|seed| seed.parse().unwrap())
             .unwrap_or(0);
 
-        let interactive = !std::env::var("SCHEDULER_NONINTERACTIVE").is_ok();
+        let interactive = std::env::var("SCHEDULER_NONINTERACTIVE").is_err();
 
         (seed..seed + num_iterations as u64)
             .map(|seed| {
@@ -529,7 +529,7 @@ impl TestScheduler {
                     .lock()
                     .timers
                     .first()
-                    .map_or(false, |t| t.expiration <= self.clock.now())
+                    .is_some_and(|t| t.expiration <= self.clock.now())
                 {
                     return true;
                 }
@@ -764,7 +764,7 @@ impl Default for TestSchedulerConfig {
             randomize_order: true,
             allow_parking: false,
             capture_pending_traces: env::var(PENDING_TRACES_VAR_NAME)
-                .map_or(false, |var| var == "1" || var == "true"),
+                .is_ok_and(|var| var == "1" || var == "true"),
             timeout_ticks: 1..=1000,
         }
     }

@@ -407,11 +407,10 @@ fn find_handle_position(
     handle_type: HandleType,
 ) -> HandlePosition {
     // Try exact match first
-    if let Some(id) = handle_id {
-        if let Some(def) = node.handles.iter().find(|h| h.id.as_ref() == Some(id)) {
+    if let Some(id) = handle_id
+        && let Some(def) = node.handles.iter().find(|h| h.id.as_ref() == Some(id)) {
             return def.position;
         }
-    }
 
     // Fall back to first handle of the right type
     node.handles

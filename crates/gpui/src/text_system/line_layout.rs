@@ -837,15 +837,13 @@ impl LineLayoutCache {
                 } == key_ref
             })
             .cloned()
-        {
-            if let Some((key, layout)) = previous_frame.lines_by_hash.remove_entry(&existing_key) {
+            && let Some((key, layout)) = previous_frame.lines_by_hash.remove_entry(&existing_key) {
                 current_frame
                     .lines_by_hash
                     .insert(key.clone(), layout.clone());
                 current_frame.used_lines_by_hash.push(key);
                 return layout;
             }
-        }
 
         let text = materialize_text();
         let mut layout = self

@@ -407,7 +407,7 @@ impl TextWrapper {
     ///
     /// If the `text` is the same as the current text, do nothing.
     fn update_all(&mut self, text: &Rope, cx: &mut App) {
-        self.update(text, &(0..text.len()), &text, cx);
+        self.update(text, &(0..text.len()), text, cx);
     }
 
     /// Return display point (with soft wrap) from the given byte offset in the text.
@@ -439,7 +439,7 @@ impl TextWrapper {
         // Otherwise return the eof of the line.
         let last_range = line.wrapped_lines.last().unwrap_or(&(0..0));
         let ix = line.lines_len().saturating_sub(1);
-        return WrapDisplayPoint::new(wrapped_row + ix, ix, last_range.len());
+        WrapDisplayPoint::new(wrapped_row + ix, ix, last_range.len())
     }
 
     /// Return byte offset in the text from the given display point (with soft wrap).

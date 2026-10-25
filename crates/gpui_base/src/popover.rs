@@ -93,11 +93,10 @@ impl PopoverState {
                 );
         } else {
             self.dismiss_subscription = None;
-            if let Some(previous) = self.previous_focus_handle.take() {
-                if self.focus_handle.contains_focused(window, cx) {
+            if let Some(previous) = self.previous_focus_handle.take()
+                && self.focus_handle.contains_focused(window, cx) {
                     previous.focus(window, cx);
                 }
-            }
         }
 
         if let Some(callback) = self.on_open_change.as_ref() {

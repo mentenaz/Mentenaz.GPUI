@@ -262,7 +262,9 @@ impl SerializedTaskTiming {
     ///
     /// `anchor` - [`Instant`] that should be earlier than all timings to use as base anchor
     pub fn convert(anchor: Instant, timings: &[TaskTiming]) -> Vec<SerializedTaskTiming> {
-        let serialized = timings
+        
+
+        timings
             .iter()
             .map(|timing| {
                 let start = timing.start.duration_since(anchor).as_nanos();
@@ -273,9 +275,7 @@ impl SerializedTaskTiming {
                     duration,
                 }
             })
-            .collect::<Vec<_>>();
-
-        serialized
+            .collect::<Vec<_>>()
     }
 
     /// `anchor` - [`Instant`] that should be earlier than all timings to use as base anchor

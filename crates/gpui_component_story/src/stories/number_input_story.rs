@@ -143,11 +143,10 @@ impl NumberInputStory {
         match event {
             InputEvent::Change => {
                 let text = state.read(cx).value();
-                if state == &self.number_input1 {
-                    if let Ok(value) = text.parse::<i64>() {
+                if state == &self.number_input1
+                    && let Ok(value) = text.parse::<i64>() {
                         self.number_input1_value = value;
                     }
-                }
                 println!("Change: {}", text);
             }
             InputEvent::PressEnter { secondary, shift } => {

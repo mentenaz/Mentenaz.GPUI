@@ -171,12 +171,11 @@ impl EditorStory {
             if !matches!(event, InputEvent::Change) {
                 return;
             }
-            if let Some(tab) = this.tabs.iter_mut().find(|tab| tab.path == dirty_path) {
-                if !tab.is_dirty {
+            if let Some(tab) = this.tabs.iter_mut().find(|tab| tab.path == dirty_path)
+                && !tab.is_dirty {
                     tab.is_dirty = true;
                     cx.notify();
                 }
-            }
             cx.emit(ContentChanged {
                 path: dirty_path.clone().into(),
                 content: state.read(cx).value(),

@@ -116,17 +116,16 @@ impl InputBaseState<EditorMode> {
         self.extras.lsp._hover_task = cx.spawn_in(window, async move |_, cx| {
             let locations = task.await?;
 
-            _ = editor.update(cx, |editor, cx| {
+            editor.update(cx, |editor, cx| {
                 if locations.is_empty() {
                     editor.extras.hover_definition.clear();
                 } else {
-                    if let Some(location) = locations.first() {
-                        if let Some(range) = location.origin_selection_range {
+                    if let Some(location) = locations.first()
+                        && let Some(range) = location.origin_selection_range {
                             let start = editor.text.position_to_offset(&range.start);
                             let end = editor.text.position_to_offset(&range.end);
                             symbol_range = start..end;
                         }
-                    }
 
                     editor
                         .extras

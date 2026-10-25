@@ -137,11 +137,10 @@ impl ListDelegate for ListItemDeletegate {
     fn confirm(&mut self, _secondary: bool, _: &mut Window, cx: &mut Context<ListState<Self>>) {
         _ = self.story.update(cx, |this, _| {
             self.confirmed_index = self.selected_index;
-            if let Some(ix) = self.confirmed_index {
-                if let Some(item) = self.matches.get(ix) {
+            if let Some(ix) = self.confirmed_index
+                && let Some(item) = self.matches.get(ix) {
                     this.selected_value = Some(SharedString::from(item.to_string()));
                 }
-            }
         });
     }
 
@@ -153,7 +152,7 @@ impl ListDelegate for ListItemDeletegate {
     ) {
         self.selected_index = ix.map(|ix| ix.row);
 
-        if let Some(_) = ix {
+        if ix.is_some() {
             cx.notify();
         }
     }

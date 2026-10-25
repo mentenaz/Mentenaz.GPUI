@@ -270,7 +270,7 @@ impl<E: IntoElement + 'static> Element for SpringAnimationElement<E> {
         window.with_element_state(global_id.unwrap(), |state, window| {
             let now = Instant::now();
             let initial = self.initial.unwrap_or(self.target);
-            let mut state = state.unwrap_or_else(|| SpringElementState {
+            let mut state = state.unwrap_or(SpringElementState {
                 spring: SpringState {
                     position: initial,
                     velocity: 0.0,

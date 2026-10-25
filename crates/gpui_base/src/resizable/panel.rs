@@ -390,7 +390,7 @@ impl Element for ResizePanelGroupElement {
         _window: &mut Window,
         _cx: &mut App,
     ) -> Self::PrepaintState {
-        ()
+        
     }
 
     fn paint(

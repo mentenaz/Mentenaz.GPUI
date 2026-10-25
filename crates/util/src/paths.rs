@@ -194,8 +194,7 @@ pub fn strip_path_suffix<'a>(base: &'a Path, suffix: &Path) -> Option<&'a Path> 
         .as_os_str()
         .as_encoded_bytes()
         .strip_suffix(suffix.as_os_str().as_encoded_bytes())
-    {
-        if remainder
+        && remainder
             .last()
             .is_none_or(|last_byte| std::path::is_separator(*last_byte as char))
         {
@@ -206,7 +205,6 @@ pub fn strip_path_suffix<'a>(base: &'a Path, suffix: &Path) -> Option<&'a Path> 
             };
             return Some(Path::new(os_str));
         }
-    }
     None
 }
 
@@ -820,7 +818,7 @@ impl PathMatcher {
                 let glob = glob.glob();
                 Some((
                     glob.to_string(),
-                    RelPath::new(&glob.as_ref(), path_style)
+                    RelPath::new(glob.as_ref(), path_style)
                         .ok()
                         .map(std::borrow::Cow::into_owned)?,
                     glob.ends_with(path_style.separators_ch()),
@@ -1103,20 +1101,14 @@ fn case_group_key(name: &str, order: SortOrder) -> u8 {
         None => return 0,
     };
     match order {
-        SortOrder::Upper => {
-            if first.is_lowercase() {
+        SortOrder::Upper
+            if first.is_lowercase() => {
                 1
-            } else {
-                0
             }
-        }
-        SortOrder::Lower => {
-            if first.is_uppercase() {
+        SortOrder::Lower
+            if first.is_uppercase() => {
                 1
-            } else {
-                0
             }
-        }
         _ => 0,
     }
 }
@@ -1175,12 +1167,8 @@ pub fn compare_rel_paths_by(
                     return file_dir_ordering;
                 }
 
-                let (a_stem, a_ext) = a_leaf_file
-                    .then(|| stem_and_extension(component_a))
-                    .unwrap_or_default();
-                let (b_stem, b_ext) = b_leaf_file
-                    .then(|| stem_and_extension(component_b))
-                    .unwrap_or_default();
+                let (a_stem, a_ext) = if a_leaf_file { stem_and_extension(component_a) } else { Default::default() };
+                let (b_stem, b_ext) = if b_leaf_file { stem_and_extension(component_b) } else { Default::default() };
                 if order == SortOrder::Extension {
                     // Directories have no extension and must take part in this comparison too,
                     // otherwise mixed mode would produce an inconsistent (non-transitive) ordering.

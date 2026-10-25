@@ -425,9 +425,9 @@ impl<E: Element> Drawable<E> {
 
                 let bounds = window.layout_bounds(layout_id);
                 let mut pushed_a11y_node = false;
-                if window.a11y.is_active() {
-                    if let Some(global_id) = global_id.as_ref() {
-                        if let Some(role) = self.element.a11y_role() {
+                if window.a11y.is_active()
+                    && let Some(global_id) = global_id.as_ref()
+                        && let Some(role) = self.element.a11y_role() {
                             let node_id = global_id.accesskit_node_id();
                             let mut node = accesskit::Node::new(role);
                             let scale = window.scale_factor();
@@ -459,8 +459,6 @@ impl<E: Element> Drawable<E> {
                                 );
                             }
                         }
-                    }
-                }
 
                 let node_id = window.next_frame.dispatch_tree.push_node();
                 let mut prepaint = self.element.prepaint(

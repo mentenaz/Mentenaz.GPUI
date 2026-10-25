@@ -88,7 +88,7 @@ impl RelPath {
 
         if result
             .components()
-            .any(|component| component == "" || component == "." || component == "..")
+            .any(|component| component.is_empty() || component == "." || component == "..")
         {
             let mut normalized = RelPathBuf::new();
             for component in result.components() {
@@ -323,6 +323,12 @@ impl fmt::Debug for RelPath {
 impl fmt::Debug for RelPathBuf {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&self.0, f)
+    }
+}
+
+impl Default for RelPathBuf {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

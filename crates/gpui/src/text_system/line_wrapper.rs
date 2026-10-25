@@ -132,14 +132,13 @@ impl LineWrapper {
                     // whitespace that wraps before any non-whitespace character (or is all whitespace),
                     // base_indent remains None so continuation rows within the leading whitespace
                     // do not receive ExtraColumns indentation and degrade into cascading short rows.
-                    if base_indent.is_none() {
-                        if let Some(first_non_whitespace_ix) = first_non_whitespace_ix {
+                    if base_indent.is_none()
+                        && let Some(first_non_whitespace_ix) = first_non_whitespace_ix {
                             base_indent =
                                 Some(Self::MAX_INDENT.min(
                                     first_non_whitespace_ix.saturating_sub(last_wrap_ix) as u32,
                                 ));
                         }
-                    }
 
                     let next_indent = match indent_adjustment {
                         IndentAdjustment::NoIndent => 0,

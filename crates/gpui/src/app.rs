@@ -679,7 +679,7 @@ impl SystemWindowTabController {
             .flat_map(|windows| windows.iter())
             .find(|tab| tab.id == id);
 
-        if tab.map_or(true, |t| t.title == title) {
+        if tab.is_none_or(|t| t.title == title) {
             return;
         }
 
@@ -2076,16 +2076,14 @@ impl App {
 
     pub(crate) fn push_effect(&mut self, effect: Effect) {
         match &effect {
-            Effect::Notify { emitter } => {
-                if !self.pending_notifications.insert(*emitter) {
+            Effect::Notify { emitter }
+                if !self.pending_notifications.insert(*emitter) => {
                     return;
                 }
-            }
-            Effect::NotifyGlobalObservers { global_type } => {
-                if !self.pending_global_notifications.insert(*global_type) {
+            Effect::NotifyGlobalObservers { global_type }
+                if !self.pending_global_notifications.insert(*global_type) => {
                     return;
                 }
-            }
             _ => {}
         };
 
@@ -3068,10 +3066,9 @@ impl App {
     }
 
     pub(crate) fn end_platform_drag(&mut self, source_window: WindowId) -> bool {
-        if !self
+        if self
             .platform_owned_drag
-            .as_ref()
-            .is_some_and(|drag| drag.source_window == source_window)
+            .as_ref().is_none_or(|drag| drag.source_window != source_window)
         {
             return false;
         }

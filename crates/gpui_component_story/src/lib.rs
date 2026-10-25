@@ -694,7 +694,9 @@ impl StoryContainer {
         let story = S::new_view(window, cx);
         let story_klass = S::klass();
 
-        let view = cx.new(|cx| {
+        
+
+        cx.new(|cx| {
             let mut story = Self::new(window, cx)
                 .story(story.into(), story_klass)
                 .on_active(S::on_active_any);
@@ -706,9 +708,7 @@ impl StoryContainer {
             story.title_bg = S::title_bg();
             story.paddings = S::paddings();
             story
-        });
-
-        view
+        })
     }
 
     pub fn width(mut self, width: gpui::Pixels) -> Self {
@@ -824,14 +824,10 @@ impl Panel for StoryContainer {
     }
 
     fn title_style(&self, cx: &App) -> Option<TitleStyle> {
-        if let Some(bg) = self.title_bg {
-            Some(TitleStyle {
+        self.title_bg.map(|bg| TitleStyle {
                 background: bg,
                 foreground: cx.theme().foreground,
             })
-        } else {
-            None
-        }
     }
 
     fn closable(&self, _cx: &App) -> bool {
@@ -855,11 +851,10 @@ impl Panel for StoryContainer {
 
     fn set_active(&mut self, active: bool, _window: &mut Window, cx: &mut Context<Self>) {
         println!("panel: {} active: {}", self.name, active);
-        if let Some(on_active) = self.on_active {
-            if let Some(story) = self.story.clone() {
+        if let Some(on_active) = self.on_active
+            && let Some(story) = self.story.clone() {
                 on_active(story, active, _window, cx);
             }
-        }
     }
 
     fn dropdown_menu(

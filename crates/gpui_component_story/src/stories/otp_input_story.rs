@@ -59,13 +59,10 @@ impl OtpInputStory {
         let otp_state = cx.new(|cx| OtpState::new(6, window, cx).masked(true));
 
         let _subscriptions = vec![
-            cx.subscribe(&otp_state, |this, state, ev: &InputEvent, cx| match ev {
-                InputEvent::Change => {
-                    let text = state.read(cx).value();
-                    this.otp_value = Some(text.clone());
-                    cx.notify();
-                }
-                _ => {}
+            cx.subscribe(&otp_state, |this, state, ev: &InputEvent, cx| if let InputEvent::Change = ev {
+                let text = state.read(cx).value();
+                this.otp_value = Some(text.clone());
+                cx.notify();
             }),
         ];
 

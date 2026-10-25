@@ -685,26 +685,20 @@ impl<M: InputModeKind> InputBaseState<M> {
         new_language: impl Into<SharedString>,
         cx: &mut Context<Self>,
     ) {
-        match &mut self.mode {
-            LayoutMode::CodeEditor {
+        if let LayoutMode::CodeEditor {
                 language,
                 highlighter,
                 ..
-            } => {
-                *language = new_language.into();
-                *highlighter.borrow_mut() = None;
-            }
-            _ => {}
+            } = &mut self.mode {
+            *language = new_language.into();
+            *highlighter.borrow_mut() = None;
         }
         cx.notify();
     }
 
     fn reset_highlighter(&mut self, cx: &mut Context<Self>) {
-        match &mut self.mode {
-            LayoutMode::CodeEditor { highlighter, .. } => {
-                *highlighter.borrow_mut() = None;
-            }
-            _ => {}
+        if let LayoutMode::CodeEditor { highlighter, .. } = &mut self.mode {
+            *highlighter.borrow_mut() = None;
         }
         cx.notify();
     }
@@ -1374,13 +1368,13 @@ impl<M: InputModeKind> InputBaseState<M> {
             offset += 1;
         }
 
-        let line = self
+        
+        self
             .text_for_range(self.range_to_utf16(&(0..offset + 1)), &mut None, window, cx)
             .unwrap_or_default()
             .rfind('\n')
             .map(|i| i + 1)
-            .unwrap_or(0);
-        line
+            .unwrap_or(0)
     }
 
     /// Get indent string of next line.
@@ -1416,9 +1410,9 @@ impl<M: InputModeKind> InputBaseState<M> {
         }
 
         if next_indent.len() > current_indent.len() {
-            return next_indent;
+            next_indent
         } else {
-            return current_indent;
+            current_indent
         }
     }
 
@@ -1656,11 +1650,10 @@ impl<M: InputModeKind> InputBaseState<M> {
 
         // If there have IME marked range and is empty (Means pressed Esc to abort IME typing)
         // Clear the marked range.
-        if let Some(ime_marked_range) = &self.ime_marked_range {
-            if ime_marked_range.len() == 0 {
+        if let Some(ime_marked_range) = &self.ime_marked_range
+            && ime_marked_range.is_empty() {
                 self.ime_marked_range = None;
             }
-        }
 
         self.selecting = true;
         let offset = self.index_for_mouse_position(event.position);
@@ -1705,11 +1698,10 @@ impl<M: InputModeKind> InputBaseState<M> {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) {
-        if event.button == MouseButton::Right {
-            if let Some((position, offset)) = self.pending_context_menu.take() {
+        if event.button == MouseButton::Right
+            && let Some((position, offset)) = self.pending_context_menu.take() {
                 self.handle_right_click_menu(position, offset, window, cx);
             }
-        }
         if self.selected_range.is_empty() {
             self.selection_reversed = false;
         }
@@ -2279,22 +2271,20 @@ impl<M: InputModeKind> InputBaseState<M> {
 
     pub(super) fn previous_boundary(&self, offset: usize) -> usize {
         let mut offset = self.text.clip_offset(offset.saturating_sub(1), Bias::Left);
-        if let Some(ch) = self.text.char_at(offset) {
-            if ch == '\r' {
+        if let Some(ch) = self.text.char_at(offset)
+            && ch == '\r' {
                 offset -= 1;
             }
-        }
 
         self.clamp_offset_to_visible_backward(offset)
     }
 
     pub(super) fn next_boundary(&self, offset: usize) -> usize {
         let mut offset = self.text.clip_offset(offset + 1, Bias::Right);
-        if let Some(ch) = self.text.char_at(offset) {
-            if ch == '\r' {
+        if let Some(ch) = self.text.char_at(offset)
+            && ch == '\r' {
                 offset += 1;
             }
-        }
 
         self.clamp_offset_to_visible_forward(offset)
     }
@@ -2446,11 +2436,10 @@ impl<M: InputModeKind> InputBaseState<M> {
             return true;
         }
 
-        if let Some(validate) = &self.validate {
-            if !validate(new_text, cx) {
+        if let Some(validate) = &self.validate
+            && !validate(new_text, cx) {
                 return false;
             }
-        }
 
         if !self.mask_pattern.is_valid(new_text) {
             return false;
@@ -2511,8 +2500,8 @@ impl<M: InputModeKind> InputBaseState<M> {
         self.input_bounds = new_bounds;
 
         // Update display_map wrap_width if changed.
-        if let Some(last_layout) = self.last_layout.as_ref() {
-            if wrap_width_changed {
+        if let Some(last_layout) = self.last_layout.as_ref()
+            && wrap_width_changed {
                 let wrap_width = if !self.soft_wrap {
                     // None to disable wrapping (will use Pixels::MAX)
                     None
@@ -2526,7 +2515,6 @@ impl<M: InputModeKind> InputBaseState<M> {
                 }
                 cx.notify();
             }
-        }
     }
 
     pub(super) fn selected_text(&self) -> RopeSlice<'_> {
@@ -2755,7 +2743,7 @@ impl<M: InputModeKind> EntityInputHandler for InputBaseState<M> {
             self.push_history(
                 &old_text,
                 &range,
-                &new_text,
+                new_text,
                 requested_intent,
                 selection_before,
                 None,
@@ -2775,7 +2763,7 @@ impl<M: InputModeKind> EntityInputHandler for InputBaseState<M> {
                 selected_range: &range,
                 old_text: &old_text,
                 new_text: &self.text,
-                change_text: &new_text,
+                change_text: new_text,
                 force: true,
             },
             window,
@@ -2792,7 +2780,7 @@ impl<M: InputModeKind> EntityInputHandler for InputBaseState<M> {
             self.mode.update_auto_grow(&self.display_map);
         }
         if !self.silent_replace_text {
-            M::on_text_typed(self, &range, &new_text, window, cx);
+            M::on_text_typed(self, &range, new_text, window, cx);
         }
         if self.emit_events {
             cx.emit(InputEvent::Change);
@@ -2867,7 +2855,7 @@ impl<M: InputModeKind> EntityInputHandler for InputBaseState<M> {
                 selected_range: &range,
                 old_text: &old_text,
                 new_text: &self.text,
-                change_text: &new_text,
+                change_text: new_text,
                 force: true,
             },
             window,
@@ -2934,25 +2922,23 @@ impl<M: InputModeKind> EntityInputHandler for InputBaseState<M> {
 
             let index_offset = last_layout.visible_line_byte_offsets[vi];
 
-            if start_origin.is_none() {
-                if let Some(p) = line.position_for_index(
+            if start_origin.is_none()
+                && let Some(p) = line.position_for_index(
                     range.start.saturating_sub(index_offset),
                     last_layout,
                     false,
                 ) {
                     start_origin = Some(p + point(px(0.), y_offset));
                 }
-            }
 
-            if end_origin.is_none() {
-                if let Some(p) = line.position_for_index(
+            if end_origin.is_none()
+                && let Some(p) = line.position_for_index(
                     range.end.saturating_sub(index_offset),
                     last_layout,
                     false,
                 ) {
                     end_origin = Some(p + point(px(0.), y_offset));
                 }
-            }
 
             y_offset += line.size(line_height).height;
         }

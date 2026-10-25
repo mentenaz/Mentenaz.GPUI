@@ -232,7 +232,7 @@ impl Styled for VirtualList {
 
 impl VirtualList {
     pub fn track_scroll(mut self, scroll_handle: &VirtualListScrollHandle) -> Self {
-        self.base = self.base.track_scroll(&scroll_handle);
+        self.base = self.base.track_scroll(scroll_handle);
         self.scroll_handle = scroll_handle.clone();
         self
     }
@@ -390,7 +390,7 @@ impl Element for VirtualList {
                 size_layout = window.with_element_state(
                     global_id.unwrap(),
                     |state: Option<ItemSizeLayout>, _window| {
-                        let mut state = state.unwrap_or(ItemSizeLayout::default());
+                        let mut state = state.unwrap_or_default();
 
                         // Including the gap between items for calculate the item size
                         let gap = style
@@ -453,8 +453,9 @@ impl Element for VirtualList {
                 );
 
                 let axis = self.axis;
-                let layout_id =
-                    match self.sizing_behavior {
+                
+
+                match self.sizing_behavior {
                         ListSizingBehavior::Infer => {
                             window.with_text_style(style.text_style().cloned(), |window| {
                                 let size_layout = size_layout.clone();
@@ -511,9 +512,7 @@ impl Element for VirtualList {
                             .with_text_style(style.text_style().cloned(), |window| {
                                 window.request_layout(style, None, cx)
                             }),
-                    };
-
-                layout_id
+                    }
             },
         );
 

@@ -323,7 +323,7 @@ impl WindowsWindowInner {
                         unsafe { GetWindowRect(this.hwnd, &mut rc) }
                             .context("failed to get window rect")
                             .log_err();
-                        let _ = this.state.fullscreen.set(Some(StyleAndBounds {
+                        this.state.fullscreen.set(Some(StyleAndBounds {
                             style,
                             x: rc.left,
                             y: rc.top,
@@ -1619,8 +1619,7 @@ fn dwm_set_window_composition_attribute(hwnd: HWND, backdrop_type: u32) {
             std::mem::size_of_val(&backdrop_type) as u32,
         );
 
-        if !result.is_ok() {
-            return;
+        if result.is_err() {
         }
     }
 }

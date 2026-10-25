@@ -181,11 +181,10 @@ impl RenderOnce for Select {
                         return;
                     }
 
-                    if !open {
-                        if let Some(handler) = on_open_change.as_ref() {
+                    if !open
+                        && let Some(handler) = on_open_change.as_ref() {
                             handler(true, window, cx);
                         }
-                    }
 
                     if let Some(handle) = content_focus_handle.as_ref() {
                         handle.focus(window, cx);
@@ -202,11 +201,10 @@ impl RenderOnce for Select {
                         return;
                     }
 
-                    if !open {
-                        if let Some(handler) = on_open_change.as_ref() {
+                    if !open
+                        && let Some(handler) = on_open_change.as_ref() {
                             handler(true, window, cx);
                         }
-                    }
 
                     if let Some(handle) = content_focus_handle.as_ref() {
                         handle.focus(window, cx);

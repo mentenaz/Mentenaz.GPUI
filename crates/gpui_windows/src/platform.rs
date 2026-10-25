@@ -456,10 +456,9 @@ impl WindowsPlatform {
                     if stop.load(Ordering::Acquire) {
                         break;
                     }
-                    if check_device_lost(&directx_device.device)
-                        || invalidate_devices.fetch_and(false, Ordering::Acquire)
-                    {
-                        if let Err(err) = handle_gpu_device_lost(
+                    if (check_device_lost(&directx_device.device)
+                        || invalidate_devices.fetch_and(false, Ordering::Acquire))
+                        && let Err(err) = handle_gpu_device_lost(
                             &mut directx_device,
                             platform_window.as_raw(),
                             validation_number,
@@ -468,7 +467,6 @@ impl WindowsPlatform {
                         ) {
                             panic!("Device lost: {err}");
                         }
-                    }
                     let Some(all_windows) = all_windows.upgrade() else {
                         break;
                     };
@@ -1731,7 +1729,7 @@ fn handle_gpu_device_lost(
     }
 
     if let Some(text_system) = text_system.upgrade() {
-        text_system.handle_gpu_lost(&directx_devices)?;
+        text_system.handle_gpu_lost(directx_devices)?;
     }
     if let Some(all_windows) = all_windows.upgrade() {
         for window in all_windows.read().iter() {

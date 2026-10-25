@@ -536,7 +536,7 @@ impl ListDelegate for CompanyListDelegate {
             return false;
         }
 
-        return !self.eof;
+        !self.eof
     }
 
     fn load_more_threshold(&self) -> usize {

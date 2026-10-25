@@ -151,13 +151,11 @@ impl SearchableListDelegate for Max2Delegate {
                     selection.retain(|(ix, _)| ix != index);
                 }
                 SearchableListChange::Select { index } => {
-                    if selection.len() < 2 {
-                        if let Some(item) = self.item(*index) {
-                            if !selection.iter().any(|(ix, _)| ix == index) {
+                    if selection.len() < 2
+                        && let Some(item) = self.item(*index)
+                            && !selection.iter().any(|(ix, _)| ix == index) {
                                 selection.push((*index, *item));
                             }
-                        }
-                    }
                 }
             }
         }

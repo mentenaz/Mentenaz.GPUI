@@ -15,7 +15,7 @@ pub fn init(title: impl Into<SharedString>, cx: &mut App) -> Entity<AppMenuBar> 
         let title = title.clone();
         let app_menu_bar = app_menu_bar.clone();
         move |s: &SelectLocale, cx: &mut App| {
-            rust_i18n::set_locale(&s.0.as_str());
+            rust_i18n::set_locale(s.0.as_str());
             update_app_menu(title.clone(), app_menu_bar.clone(), cx);
         }
     });

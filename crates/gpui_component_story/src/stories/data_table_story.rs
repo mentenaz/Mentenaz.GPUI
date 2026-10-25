@@ -164,7 +164,7 @@ impl Stock {
         self.turnover = self.volume * self.price;
         self.market_cap = self.price * self.shares as f64;
         self.ttm = (5.0..80.0).fake::<f64>();
-        self.five_mins_ranking = self.five_mins_ranking * (1.0 + (-0.2..0.2).fake::<f64>());
+        self.five_mins_ranking *= (1.0 + (-0.2..0.2).fake::<f64>());
         self.bid = self.price * (1.0 - (0.0..0.01).fake::<f64>());
         self.bid_volume = (100.0..5e4).fake::<f64>();
         self.ask = self.price * (1.0 + (0.0..0.01).fake::<f64>());
@@ -649,13 +649,13 @@ impl TableDelegate for StockTableDelegate {
 
         match col.key.as_ref() {
             "id" => self
-                .value_cell(&col)
+                .value_cell(col)
                 .text_color(cx.theme().muted_foreground)
                 .when(col.align == TextAlign::Center, |this| this.justify_center())
                 .child(stock.id.to_string())
                 .into_any_element(),
             "market" => self
-                .value_cell(&col)
+                .value_cell(col)
                 .map(|this| {
                     if stock.counter.market == "US" {
                         this.text_color(cx.theme().blue)
@@ -666,71 +666,71 @@ impl TableDelegate for StockTableDelegate {
                 .child(stock.counter.market.clone())
                 .into_any_element(),
             "symbol" => self
-                .value_cell(&col)
+                .value_cell(col)
                 .font_medium()
                 .child(stock.counter.symbol_code())
                 .into_any_element(),
             "name" => self
-                .value_cell(&col)
+                .value_cell(col)
                 .child(div().truncate().child(stock.counter.name.clone()))
                 .into_any_element(),
             "price" => self
-                .value_cell(&col)
+                .value_cell(col)
                 .font_semibold()
                 .child(format!("{:.2}", stock.price))
                 .into_any_element(),
-            "change" => self.render_change(&col, stock.change, cx),
-            "change_percent" => self.render_percent(&col, stock.change_percent, cx),
-            "volume" => self.render_number(&col, compact(stock.volume)),
-            "turnover" => self.render_number(&col, compact(stock.turnover)),
-            "market_cap" => self.render_number(&col, compact(stock.market_cap)),
-            "ttm" => self.render_number(&col, compact(stock.ttm)),
+            "change" => self.render_change(col, stock.change, cx),
+            "change_percent" => self.render_percent(col, stock.change_percent, cx),
+            "volume" => self.render_number(col, compact(stock.volume)),
+            "turnover" => self.render_number(col, compact(stock.turnover)),
+            "market_cap" => self.render_number(col, compact(stock.market_cap)),
+            "ttm" => self.render_number(col, compact(stock.ttm)),
             "five_mins_ranking" => {
-                self.render_number(&col, format!("{:.0}", stock.five_mins_ranking))
+                self.render_number(col, format!("{:.0}", stock.five_mins_ranking))
             }
             "th60_days_ranking" => {
-                self.render_number(&col, format!("{:.0}", stock.th60_days_ranking))
+                self.render_number(col, format!("{:.0}", stock.th60_days_ranking))
             }
-            "year_change_percent" => self.render_percent(&col, stock.year_change_percent, cx),
-            "bid" => self.render_number(&col, format!("{:.2}", stock.bid)),
-            "bid_volume" => self.render_number(&col, compact(stock.bid_volume)),
-            "ask" => self.render_number(&col, format!("{:.2}", stock.ask)),
-            "ask_volume" => self.render_number(&col, compact(stock.ask_volume)),
-            "open" => self.render_number(&col, format!("{:.2}", stock.open)),
-            "prev_close" => self.render_number(&col, format!("{:.2}", stock.prev_close)),
-            "high" => self.render_number(&col, format!("{:.2}", stock.high)),
-            "low" => self.render_number(&col, format!("{:.2}", stock.low)),
+            "year_change_percent" => self.render_percent(col, stock.year_change_percent, cx),
+            "bid" => self.render_number(col, format!("{:.2}", stock.bid)),
+            "bid_volume" => self.render_number(col, compact(stock.bid_volume)),
+            "ask" => self.render_number(col, format!("{:.2}", stock.ask)),
+            "ask_volume" => self.render_number(col, compact(stock.ask_volume)),
+            "open" => self.render_number(col, format!("{:.2}", stock.open)),
+            "prev_close" => self.render_number(col, format!("{:.2}", stock.prev_close)),
+            "high" => self.render_number(col, format!("{:.2}", stock.high)),
+            "low" => self.render_number(col, format!("{:.2}", stock.low)),
             "turnover_rate" => {
-                self.render_number(&col, format!("{:.2}%", stock.turnover_rate * 100.))
+                self.render_number(col, format!("{:.2}%", stock.turnover_rate * 100.))
             }
-            "rise_rate" => self.render_number(&col, format!("{:.2}%", stock.rise_rate * 100.)),
-            "amplitude" => self.render_number(&col, format!("{:.2}%", stock.amplitude * 100.)),
-            "pe_status" => self.render_number(&col, format!("{:.2}", stock.pe_status)),
-            "pb_status" => self.render_number(&col, format!("{:.2}", stock.pb_status)),
-            "volume_ratio" => self.render_number(&col, format!("{:.2}", stock.volume_ratio)),
-            "bid_ask_ratio" => self.render_number(&col, format!("{:.2}", stock.bid_ask_ratio)),
+            "rise_rate" => self.render_number(col, format!("{:.2}%", stock.rise_rate * 100.)),
+            "amplitude" => self.render_number(col, format!("{:.2}%", stock.amplitude * 100.)),
+            "pe_status" => self.render_number(col, format!("{:.2}", stock.pe_status)),
+            "pb_status" => self.render_number(col, format!("{:.2}", stock.pb_status)),
+            "volume_ratio" => self.render_number(col, format!("{:.2}", stock.volume_ratio)),
+            "bid_ask_ratio" => self.render_number(col, format!("{:.2}", stock.bid_ask_ratio)),
             "latest_pre_close" => {
-                self.render_number(&col, format!("{:.2}", stock.latest_pre_close))
+                self.render_number(col, format!("{:.2}", stock.latest_pre_close))
             }
             "latest_post_close" => {
-                self.render_number(&col, format!("{:.2}", stock.latest_post_close))
+                self.render_number(col, format!("{:.2}", stock.latest_post_close))
             }
-            "pre_market_cap" => self.render_number(&col, compact(stock.pre_market_cap)),
-            "pre_market_percent" => self.render_percent(&col, stock.pre_market_percent, cx),
-            "pre_market_change" => self.render_change(&col, stock.pre_market_change, cx),
-            "post_market_cap" => self.render_number(&col, compact(stock.post_market_cap)),
-            "post_market_percent" => self.render_percent(&col, stock.post_market_percent, cx),
-            "post_market_change" => self.render_change(&col, stock.post_market_change, cx),
-            "float_cap" => self.render_number(&col, compact(stock.float_cap)),
-            "shares" => self.render_number(&col, compact(stock.shares as f64)),
-            "shares_float" => self.render_number(&col, compact(stock.shares_float as f64)),
-            "day_5_ranking" => self.render_number(&col, format!("{:.0}", stock.day_5_ranking)),
-            "day_10_ranking" => self.render_number(&col, format!("{:.0}", stock.day_10_ranking)),
-            "day_30_ranking" => self.render_number(&col, format!("{:.0}", stock.day_30_ranking)),
-            "day_120_ranking" => self.render_number(&col, format!("{:.0}", stock.day_120_ranking)),
-            "day_250_ranking" => self.render_number(&col, format!("{:.0}", stock.day_250_ranking)),
+            "pre_market_cap" => self.render_number(col, compact(stock.pre_market_cap)),
+            "pre_market_percent" => self.render_percent(col, stock.pre_market_percent, cx),
+            "pre_market_change" => self.render_change(col, stock.pre_market_change, cx),
+            "post_market_cap" => self.render_number(col, compact(stock.post_market_cap)),
+            "post_market_percent" => self.render_percent(col, stock.post_market_percent, cx),
+            "post_market_change" => self.render_change(col, stock.post_market_change, cx),
+            "float_cap" => self.render_number(col, compact(stock.float_cap)),
+            "shares" => self.render_number(col, compact(stock.shares as f64)),
+            "shares_float" => self.render_number(col, compact(stock.shares_float as f64)),
+            "day_5_ranking" => self.render_number(col, format!("{:.0}", stock.day_5_ranking)),
+            "day_10_ranking" => self.render_number(col, format!("{:.0}", stock.day_10_ranking)),
+            "day_30_ranking" => self.render_number(col, format!("{:.0}", stock.day_30_ranking)),
+            "day_120_ranking" => self.render_number(col, format!("{:.0}", stock.day_120_ranking)),
+            "day_250_ranking" => self.render_number(col, format!("{:.0}", stock.day_250_ranking)),
             _ => self
-                .value_cell(&col)
+                .value_cell(col)
                 .text_color(cx.theme().muted_foreground)
                 .child("--")
                 .into_any_element(),
@@ -789,7 +789,7 @@ impl TableDelegate for StockTableDelegate {
             return false;
         }
 
-        return !self.eof;
+        !self.eof
     }
 
     fn load_more_threshold(&self) -> usize {
@@ -807,7 +807,7 @@ impl TableDelegate for StockTableDelegate {
             // Simulate network request, delay 1s to load data.
             cx.background_executor().timer(Duration::from_secs(1)).await;
 
-            _ = cx.update(|cx| {
+            cx.update(|cx| {
                 let _ = view.update(cx, |view, _| {
                     view.delegate_mut().stocks.extend(random_stocks(200));
                     view.delegate_mut().loading = false;

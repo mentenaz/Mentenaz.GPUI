@@ -270,11 +270,9 @@ impl<'a> Components<'a> {
         }
         if self.has_prefixes()
             && let Some(p) = self.prefix
-        {
-            if p.has_implicit_root() {
+            && p.has_implicit_root() {
                 return true;
             }
-        }
         false
     }
 

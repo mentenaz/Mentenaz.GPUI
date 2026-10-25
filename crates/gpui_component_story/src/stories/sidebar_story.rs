@@ -331,10 +331,10 @@ impl Item {
     {
         let item = *self;
         move |this, _, _, cx| {
-            if this.active_items.contains_key(&item) {
-                this.active_items.remove(&item);
+            if let std::collections::hash_map::Entry::Vacant(e) = this.active_items.entry(item) {
+                e.insert(true);
             } else {
-                this.active_items.insert(item, true);
+                this.active_items.remove(&item);
             }
 
             this.last_active_item = item;
@@ -548,7 +548,7 @@ impl Render for SidebarStory {
                         SidebarGroup::new("Platform").child(SidebarMenu::new().children(
                             groups[0].iter().enumerate().map(|(ix, item)| {
                                 let is_active =
-                                    self.last_active_item == *item && self.active_subitem == None;
+                                    self.last_active_item == *item && self.active_subitem.is_none();
                                 SidebarMenuItem::new(item.label())
                                     .icon(item.icon())
                                     .active(is_active)
@@ -589,7 +589,7 @@ impl Render for SidebarStory {
                                                         }
                                                     })
                                                 })
-                                                .on_click(cx.listener(sub_item.handler(&item)))
+                                                .on_click(cx.listener(sub_item.handler(item)))
                                         },
                                     ))
                                     .on_click(cx.listener(item.handler()))
@@ -600,7 +600,7 @@ impl Render for SidebarStory {
                         SidebarGroup::new("Projects").child(SidebarMenu::new().children(
                             groups[1].iter().enumerate().map(|(ix, item)| {
                                 let is_active =
-                                    self.last_active_item == *item && self.active_subitem == None;
+                                    self.last_active_item == *item && self.active_subitem.is_none();
                                 SidebarMenuItem::new(item.label())
                                     .icon(item.icon())
                                     .active(is_active)

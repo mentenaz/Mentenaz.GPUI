@@ -74,7 +74,7 @@ impl ProgressStory {
                         .await;
 
                     let mut need_break = false;
-                    _ = entity.update(cx, |this, cx| {
+                    entity.update(cx, |this, cx| {
                         this.value = (this.value + 2.).min(100.);
                         cx.notify();
 

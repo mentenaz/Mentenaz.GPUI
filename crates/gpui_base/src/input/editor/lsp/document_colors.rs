@@ -104,9 +104,9 @@ impl Lsp {
                 .update(|window, cx| provider.document_colors(&text, window, cx))
                 .ok();
 
-            if let Some(task) = task_result {
-                if let Ok(colors) = task.await {
-                    let _ = input_state.update(cx, |input_state, cx| {
+            if let Some(task) = task_result
+                && let Ok(colors) = task.await {
+                    input_state.update(cx, |input_state, cx| {
                         let Some(document_colors) = document_colors_from_response(&colors) else {
                             return;
                         };
@@ -117,7 +117,6 @@ impl Lsp {
                         }
                     });
                 }
-            }
         });
     }
 }

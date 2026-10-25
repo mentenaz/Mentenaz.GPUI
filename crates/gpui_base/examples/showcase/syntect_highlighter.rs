@@ -208,13 +208,11 @@ fn brace_fold_ranges(text: &str) -> Vec<FoldRange> {
                 quoted = !quoted;
             } else if !quoted && character == '{' {
                 starts.push(line_number);
-            } else if !quoted && character == '}' {
-                if let Some(start_line) = starts.pop() {
-                    if start_line < line_number {
+            } else if !quoted && character == '}'
+                && let Some(start_line) = starts.pop()
+                    && start_line < line_number {
                         ranges.push(FoldRange::new(start_line, line_number));
                     }
-                }
-            }
             escaped = quoted && character == '\\' && !escaped;
             if character != '\\' {
                 escaped = false;

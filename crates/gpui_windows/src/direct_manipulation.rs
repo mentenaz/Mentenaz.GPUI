@@ -58,7 +58,7 @@ impl DirectManipulationHandler {
                 right: DEFAULT_VIEWPORT_SIZE,
                 bottom: DEFAULT_VIEWPORT_SIZE,
             };
-            viewport.SetViewportRect(&mut rect)?;
+            viewport.SetViewportRect(&rect)?;
 
             manager.Activate(window)?;
             viewport.Enable()?;
@@ -225,11 +225,10 @@ impl IDirectManipulationViewportEventHandler_Impl for DirectManipulationEventHan
 
             // Reset the content transform so the viewport is ready for the next gesture.
             // ZoomToRect triggers a second RUNNING -> READY cycle, so prevent an infinite loop here.
-            if self.last_scale.get() != 1.0
+            if (self.last_scale.get() != 1.0
                 || self.last_x_offset.get() != 0.0
-                || self.last_y_offset.get() != 0.0
-            {
-                if let Some(viewport) = viewport.as_ref() {
+                || self.last_y_offset.get() != 0.0)
+                && let Some(viewport) = viewport.as_ref() {
                     unsafe {
                         viewport
                             .ZoomToRect(
@@ -242,7 +241,6 @@ impl IDirectManipulationViewportEventHandler_Impl for DirectManipulationEventHan
                             .log_err();
                     }
                 }
-            }
 
             self.last_scale.set(1.0);
             self.last_x_offset.set(0.0);

@@ -88,7 +88,8 @@ impl Render for NotificationStory {
                         {
                             let view = view.clone();
                             move |menu, window, cx| {
-                                let menu = ANCHORS.into_iter().fold(menu, |menu, placement| {
+                                
+                                ANCHORS.into_iter().fold(menu, |menu, placement| {
                                     menu.item(
                                         PopupMenuItem::new(format!("{:?}", placement))
                                             .checked(cx.theme().notification.placement == placement)
@@ -101,8 +102,7 @@ impl Render for NotificationStory {
                                                 },
                                             )),
                                     )
-                                });
-                                menu
+                                })
                             }
                         },
                     )

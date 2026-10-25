@@ -178,40 +178,37 @@ impl LayoutMode {
         window: &mut Window,
         cx: &mut Context<crate::input::InputBaseState<M>>,
     ) {
-        match &self {
-            LayoutMode::CodeEditor {
+        if let LayoutMode::CodeEditor {
                 language,
                 highlighter,
                 highlighter_factory,
                 folding,
                 ..
-            } => {
-                if !update.force && highlighter.borrow().is_some() {
-                    return;
-                }
-
-                let mut highlighter_ref = highlighter.borrow_mut();
-                if highlighter_ref.is_none() {
-                    let Some(factory) = highlighter_factory else {
-                        return;
-                    };
-                    *highlighter_ref = factory(language);
-                }
-
-                if highlighter_ref.is_none() {
-                    return;
-                }
-                drop(highlighter_ref);
-
-                let edit = replacement_input_edit(
-                    update.old_text,
-                    update.new_text,
-                    update.selected_range,
-                    update.change_text,
-                );
-                M::drive_highlighter(highlighter, edit, update.new_text, *folding, window, cx);
+            } = &self {
+            if !update.force && highlighter.borrow().is_some() {
+                return;
             }
-            _ => {}
+
+            let mut highlighter_ref = highlighter.borrow_mut();
+            if highlighter_ref.is_none() {
+                let Some(factory) = highlighter_factory else {
+                    return;
+                };
+                *highlighter_ref = factory(language);
+            }
+
+            if highlighter_ref.is_none() {
+                return;
+            }
+            drop(highlighter_ref);
+
+            let edit = replacement_input_edit(
+                update.old_text,
+                update.new_text,
+                update.selected_range,
+                update.change_text,
+            );
+            M::drive_highlighter(highlighter, edit, update.new_text, *folding, window, cx);
         }
     }
 
@@ -255,11 +252,9 @@ impl LayoutMode {
             highlighter_factory,
             ..
         } = self
-        {
-            if highlighter_factory.is_none() {
+            && highlighter_factory.is_none() {
                 *highlighter_factory = Some(factory);
             }
-        }
     }
 }
 

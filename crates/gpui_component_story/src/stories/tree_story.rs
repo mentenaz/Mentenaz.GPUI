@@ -129,7 +129,7 @@ impl TreeStory {
     fn load_files(state: Entity<TreeState>, path: PathBuf, cx: &mut Context<Self>) {
         cx.spawn(async move |weak_self, cx| {
             let items = load_tree_items(path);
-            _ = state.update(cx, |state, cx| {
+            state.update(cx, |state, cx| {
                 state.set_items(items.clone(), cx);
             });
 

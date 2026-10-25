@@ -538,11 +538,10 @@ impl ScrollbarStateInner {
     fn with_hovered_on_thumb(&self, axis: Option<Axis>) -> Self {
         let mut state = *self;
         state.hovered_on_thumb = axis;
-        if self.is_scrollbar_visible() {
-            if axis.is_some() {
+        if self.is_scrollbar_visible()
+            && axis.is_some() {
                 state.last_scroll_time = Some(Instant::now());
             }
-        }
         state
     }
 
@@ -1215,8 +1214,8 @@ impl Element for Scrollbar {
             window.request_animation_frame();
         }
 
-        if !is_hovered && !is_dragging {
-            if let Some(last_time) = inner.last_scroll_time {
+        if !is_hovered && !is_dragging
+            && let Some(last_time) = inner.last_scroll_time {
                 let elapsed = now.saturating_duration_since(last_time);
                 if elapsed < motion.idle() && !inner.idle_timer_scheduled {
                     inner.idle_timer_scheduled = true;
@@ -1232,7 +1231,6 @@ impl Element for Scrollbar {
                         .detach();
                 }
             }
-        }
         state.set(inner);
 
         let mut states = vec![];
@@ -1498,15 +1496,14 @@ impl Element for Scrollbar {
                         let scroll_handle = self.scroll_handle.clone();
 
                         move |event: &ScrollEvent, phase, _, cx| {
-                            if phase.bubble() && hitbox_bounds.contains(&event.position) {
-                                if scroll_handle.offset() != state.get().last_scroll_offset {
+                            if phase.bubble() && hitbox_bounds.contains(&event.position)
+                                && scroll_handle.offset() != state.get().last_scroll_offset {
                                     state.set(state.get().with_last_scroll(
                                         scroll_handle.offset(),
                                         Some(Instant::now()),
                                     ));
                                     cx.notify(view_id);
                                 }
-                            }
                         }
                     });
 

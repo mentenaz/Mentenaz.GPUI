@@ -37,11 +37,10 @@ impl InputBaseState<EditorMode> {
             return;
         };
 
-        if let Some(hover_popover) = self.extras.hover_popover.as_ref() {
-            if hover_popover.symbol_range.contains(&offset) {
+        if let Some(hover_popover) = self.extras.hover_popover.as_ref()
+            && hover_popover.symbol_range.contains(&offset) {
                 return;
             }
-        }
 
         // Currently not implemented.
         let task = provider.hover(&self.text, offset, window, cx);
@@ -57,7 +56,7 @@ impl InputBaseState<EditorMode> {
 
             let result = task.await?;
 
-            _ = editor.update(cx, |editor, cx| {
+            editor.update(cx, |editor, cx| {
                 match result {
                     Some(hover) => {
                         if let Some(range) = hover.range {

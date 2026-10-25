@@ -410,7 +410,7 @@ impl ThemeColorsStory {
                             entries: colors,
                         },
                     )| {
-                        let is_open = self.force_open_state.unwrap_or_else(|| idx == 0);
+                        let is_open = self.force_open_state.unwrap_or(idx == 0);
 
                         SidebarMenuItem::new(category_name.clone())
                             .default_open(is_open)
@@ -599,7 +599,7 @@ fn format_colors(
                 // Check if this key is explicit in the user config
                 let is_explicit = config_keys
                     .as_ref()
-                    .map_or(false, |k| k.contains(&parsed.canonical_key));
+                    .is_some_and(|k| k.contains(&parsed.canonical_key));
 
                 categories.entry(category).or_default().push(ColorEntry {
                     name,

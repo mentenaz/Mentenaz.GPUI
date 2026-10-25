@@ -103,7 +103,7 @@ impl Plot for StackedBarChart {
             let y1 = y.clone();
 
             let key = &series.key;
-            let fill = ordinal.map(&key).unwrap_or(cx.theme().chart_4);
+            let fill = ordinal.map(key).unwrap_or(cx.theme().chart_4);
 
             Bar::new()
                 .data(&series.points)

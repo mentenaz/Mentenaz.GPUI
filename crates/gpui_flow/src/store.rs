@@ -383,7 +383,7 @@ impl FlowState {
                 && point.1 <= abs_pos.y + fh
             {
                 let depth = self.depth_of(&node.id);
-                if deepest.as_ref().map_or(true, |(d, _)| depth > *d) {
+                if deepest.as_ref().is_none_or(|(d, _)| depth > *d) {
                     deepest = Some((depth, node.id.clone()));
                 }
             }
@@ -569,11 +569,10 @@ impl FlowState {
     /// `new_parent_id` would create a cycle (is the node itself, or one of
     /// its own descendants) or if either node can't be resolved.
     pub fn set_parent(&mut self, node_id: &NodeId, new_parent_id: Option<NodeId>) {
-        if let Some(ref pid) = new_parent_id {
-            if pid == node_id || self.is_descendant(node_id, pid) {
+        if let Some(ref pid) = new_parent_id
+            && (pid == node_id || self.is_descendant(node_id, pid)) {
                 return;
             }
-        }
         let Some(abs) = self.absolute_position(node_id) else {
             return;
         };
@@ -845,8 +844,8 @@ impl FlowState {
                     let dy = mouse.1 - hy;
                     let dist = (dx * dx + dy * dy).sqrt();
 
-                    if dist <= radius {
-                        if best.is_none() || dist < best.as_ref().unwrap().0 {
+                    if dist <= radius
+                        && (best.is_none() || dist < best.as_ref().unwrap().0) {
                             best = Some((
                                 dist,
                                 SnapTarget {
@@ -858,7 +857,6 @@ impl FlowState {
                                 },
                             ));
                         }
-                    }
                 }
             }
         }

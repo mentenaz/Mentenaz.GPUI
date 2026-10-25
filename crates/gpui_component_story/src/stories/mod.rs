@@ -186,7 +186,7 @@ pub trait Story: Render + Sized {
     where
         Self: 'static,
     {
-        if let Some(story) = view.downcast::<Self>().ok() {
+        if let Ok(story) = view.downcast::<Self>() {
             cx.update_entity(&story, |story, cx| {
                 story.on_active(active, window, cx);
             });

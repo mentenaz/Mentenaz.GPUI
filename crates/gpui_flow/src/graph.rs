@@ -651,11 +651,10 @@ impl FlowGraph {
                         // effective target to that descendant so the
                         // container can't overwrite the child's selection.
                         let mut effective_id = node_id.clone();
-                        if state.is_container(&node_id) {
-                            if let Some(descendant) = state.descendant_at_flow(&node_id, mouse) {
+                        if state.is_container(&node_id)
+                            && let Some(descendant) = state.descendant_at_flow(&node_id, mouse) {
                                 effective_id = descendant;
                             }
-                        }
 
                         // Handle selection
                         if !multi {
@@ -674,15 +673,14 @@ impl FlowGraph {
 
                         // Start drag — collect all selected nodes
                         let mut node_origins = Vec::new();
-                        if let Some(n) = state.get_node(&effective_id) {
-                            if n.selected && n.draggable {
+                        if let Some(n) = state.get_node(&effective_id)
+                            && n.selected && n.draggable {
                                 for n in &state.nodes {
                                     if n.selected && n.draggable {
                                         node_origins.push((n.id.clone(), n.position));
                                     }
                                 }
                             }
-                        }
 
                         if !node_origins.is_empty() {
                             state.push_undo();
@@ -1297,8 +1295,8 @@ impl Render for FlowGraph {
             let mut edge_label_elements: Vec<AnyElement> = Vec::new();
             let show_edge_labels = state.detail_level() == DetailLevel::Full;
             for edge in state.edges.iter().filter(|_| show_edge_labels) {
-                if let Some(ref label) = edge.label {
-                    if let Some((lx, ly)) = edges::compute_edge_label_position(state, edge) {
+                if let Some(ref label) = edge.label
+                    && let Some((lx, ly)) = edges::compute_edge_label_position(state, edge) {
                         let label_color = edge.color.unwrap_or(0xb1b1b7);
                         edge_label_elements.push(
                             div()
@@ -1315,7 +1313,6 @@ impl Render for FlowGraph {
                                 .into_any_element(),
                         );
                     }
-                }
             }
 
             (

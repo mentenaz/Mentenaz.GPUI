@@ -54,7 +54,7 @@ struct Form {
 impl Form {
     fn new(parent: WeakEntity<PopoverStory>, window: &mut Window, cx: &mut App) -> Entity<Self> {
         cx.new(|cx| Self {
-            parent: parent,
+            parent,
             input1: cx.new(|cx| InputState::new(window, cx)),
         })
     }
@@ -168,7 +168,7 @@ impl PopoverStory {
         let form = Form::new(cx.weak_entity(), window, cx);
         let parent = cx.weak_entity();
         let list = cx.new(|cx| {
-            ListState::new(DropdownListDelegate { parent: parent }, window, cx).searchable(true)
+            ListState::new(DropdownListDelegate { parent }, window, cx).searchable(true)
         });
 
         cx.focus_self(window);

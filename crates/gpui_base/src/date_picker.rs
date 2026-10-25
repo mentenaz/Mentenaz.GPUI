@@ -84,11 +84,10 @@ impl RenderOnce for DatePicker {
                 move |_: &Confirm, window, cx| {
                     if disabled {
                         cx.propagate();
-                    } else if !open {
-                        if let Some(handler) = &handler {
+                    } else if !open
+                        && let Some(handler) = &handler {
                             handler(true, window, cx);
                         }
-                    }
                 }
             })
             .on_action(move |_: &Cancel, window, cx| {

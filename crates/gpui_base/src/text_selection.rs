@@ -959,19 +959,15 @@ impl WindowSelectionState {
         let stale = self
             .participants
             .iter()
-            .filter_map(|(id, registration)| {
-                (registration.generation != self.frame_generation)
-                    .then(|| (*id, registration.participant.clone()))
-            })
+            .filter(|&(id, registration)| (registration.generation != self.frame_generation)).map(|(id, registration)| (*id, registration.participant.clone()))
             .collect::<Vec<_>>();
         let mut handlers = Vec::new();
         for (id, participant) in stale {
             self.participants.remove(&id);
-            if let Some(participant) = participant.upgrade() {
-                if let Some(handler) = participant.update(cx, |state, cx| state.clear_state(cx)) {
+            if let Some(participant) = participant.upgrade()
+                && let Some(handler) = participant.update(cx, |state, cx| state.clear_state(cx)) {
                     handlers.push(handler);
                 }
-            }
         }
         self.publish_snapshots(cx);
         self.frame_generation = self.frame_generation.wrapping_add(1);
@@ -1234,11 +1230,10 @@ impl WindowSelectionState {
         self.cursor = Some(endpoint.clone());
         self.did_hit_text = anchor.inside_text || endpoint.inside_text;
         self.is_selecting = true;
-        if let Some(participant) = focus_participant.and_then(|participant| participant.upgrade()) {
-            if let Some(window) = window {
+        if let Some(participant) = focus_participant.and_then(|participant| participant.upgrade())
+            && let Some(window) = window {
                 participant.update(cx, |state, cx| state.focus(window, cx));
             }
-        }
         self.publish_snapshots(cx);
     }
 

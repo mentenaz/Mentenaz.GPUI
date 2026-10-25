@@ -146,17 +146,16 @@ impl Lsp {
                 .update(|window, cx| provider.semantic_tokens(&text, range, window, cx))
                 .ok();
 
-            if let Some(task) = task_result {
-                if let Ok(tokens) = task.await {
+            if let Some(task) = task_result
+                && let Ok(tokens) = task.await {
                     let decoded = decode_semantic_tokens(&tokens, &legend);
-                    let _ = input_state.update(cx, |input_state, cx| {
+                    input_state.update(cx, |input_state, cx| {
                         if decoded != input_state.extras.lsp.semantic_tokens {
                             input_state.extras.lsp.semantic_tokens = decoded;
                             cx.notify();
                         }
                     });
                 }
-            }
         });
     }
 }

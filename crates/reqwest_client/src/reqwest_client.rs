@@ -25,6 +25,12 @@ pub struct ReqwestClient {
     handle: tokio::runtime::Handle,
 }
 
+impl Default for ReqwestClient {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ReqwestClient {
     /// Shared connection-management configuration for every client this type
     /// builds. `read_timeout` sets an idle timeout on each body read (see

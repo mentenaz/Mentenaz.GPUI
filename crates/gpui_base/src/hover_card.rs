@@ -200,11 +200,10 @@ impl RenderOnce for HoverCard {
         let was_open = state.read(cx).is_open();
         state.update(cx, |state, _| state.sync(self.open_delay, self.close_delay));
         let open = state.read(cx).is_open();
-        if was_open != open {
-            if let Some(callback) = &self.on_open_change {
+        if was_open != open
+            && let Some(callback) = &self.on_open_change {
                 callback(&open, window, cx);
             }
-        }
 
         let trigger = self.trigger.unwrap_or_else(|| div().into_any_element());
         let popup = Popup::new(

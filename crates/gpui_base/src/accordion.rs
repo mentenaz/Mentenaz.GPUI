@@ -70,6 +70,12 @@ pub struct AccordionItem {
     children: SmallVec<[AnyElement; 2]>,
 }
 
+impl Default for AccordionItem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AccordionItem {
     pub fn new() -> Self {
         Self {
@@ -204,6 +210,12 @@ pub struct AccordionPanel {
     open: bool,
     keep_mounted: bool,
     children: SmallVec<[AnyElement; 2]>,
+}
+
+impl Default for AccordionPanel {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl AccordionPanel {

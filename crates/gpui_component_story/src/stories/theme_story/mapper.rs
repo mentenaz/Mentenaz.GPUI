@@ -205,7 +205,7 @@ fn to_title_case(s: &str) -> String {
 }
 
 fn to_title_case_full(s: &str) -> String {
-    s.split(|c| c == '_' || c == '.')
+    s.split(['_', '.'])
         .map(to_title_case)
         .collect::<Vec<_>>()
         .join(" ")
