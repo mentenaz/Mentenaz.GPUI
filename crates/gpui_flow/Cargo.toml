@@ -1,0 +1,23 @@
+[package]
+name = "gpui_flow"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license = "MIT"
+description = "A node-based flow graph editor for GPUI, inspired by React Flow / xyflow (vendored)."
+repository = "https://github.com/pacifio/gpui-flow"
+
+[lints]
+workspace = true
+
+[lib]
+doctest = false
+
+[dependencies]
+gpui.workspace = true
+
+[dev-dependencies]
+# Only the examples need this — picks the right platform backend for
+# whatever OS they're actually run on instead of hardcoding one.
+gpui_platform.workspace = true
+gpui = { workspace = true, features = ["test-support"] }

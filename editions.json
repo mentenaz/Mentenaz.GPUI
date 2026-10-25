@@ -1,0 +1,38 @@
+{
+  "dev_bin": "forgedev",
+  "editions": {
+    "forge-zed": {
+      "brand": "Forge",
+      "qualifier": "Zed Edition",
+      "display": "Forge (Zed Edition)",
+      "dir": "ForgeZed",
+      "install_name": "Forge",
+      "command": "forge",
+      "ipc": "Forge-Zed-Editor",
+      "id": "dev.forge.zed",
+      "scheme": "zed"
+    },
+    "forge-super": {
+      "brand": "Forge",
+      "qualifier": "Super",
+      "display": "Mentenaz Forge Super",
+      "dir": "ForgeSuper",
+      "install_name": "ForgeSuper",
+      "command": "forge-super",
+      "ipc": "Forge-Super-Editor",
+      "id": "dev.forge.super",
+      "scheme": "forgesuper"
+    },
+    "forge-lite": {
+      "brand": "Forge",
+      "qualifier": "Lite",
+      "display": "Forge Lite",
+      "dir": "ForgeLite",
+      "install_name": "Forge Lite",
+      "command": "forge-lite",
+      "ipc": "Forge-Lite-Editor",
+      "id": "dev.forge.lite",
+      "scheme": "forgelite"
+    }
+  }
+}

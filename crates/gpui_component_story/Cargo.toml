@@ -1,0 +1,55 @@
+[package]
+name = "gpui-component-story"
+version = "0.5.1"
+publish = false
+edition.workspace = true
+license = "Apache-2.0"
+
+[features]
+inspector = ["gpui-component/inspector"]
+tree-sitter = ["gpui-component/tree-sitter"]
+default = []
+
+[dependencies]
+anyhow.workspace = true
+gpui.workspace = true
+gpui_platform.workspace = true
+gpui-component = { workspace = true }
+gpui-component-assets.workspace = true
+gpui-fps.workspace = true
+
+autocorrect = "2.14.2"
+chrono.workspace = true
+csv = "1.4"
+fake = { version = "2.10.0", features = ["dummy"] }
+itertools.workspace = true
+lsp-types.workspace = true
+rand = "0.8"
+regex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+tracing-subscriber = { version = "0.3.22", features = ["env-filter", "fmt", "registry"], default-features = false }
+unindent.workspace = true
+rust-i18n.workspace = true
+dirs.workspace = true
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+reqwest_client.workspace = true
+smol.workspace = true
+tokio = { workspace = true, features = ["process", "io-util"] }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+gpui_web.workspace = true
+syntect.workspace = true
+getrandom = { version = "0.2", features = ["js"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = { version = "0.18" }
+
+[dev-dependencies]
+gpui = { workspace = true, features = ["test-support"] }
+gpui-base.workspace = true
+
+[lints]
+workspace = true

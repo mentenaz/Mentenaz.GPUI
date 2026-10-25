@@ -1,0 +1,21 @@
+[package]
+name = "app_names"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/lib.rs"
+doctest = false
+
+[features]
+edition-zed = []
+edition-super = []
+edition-lite = []
+
+[build-dependencies]
+serde_json.workspace = true
