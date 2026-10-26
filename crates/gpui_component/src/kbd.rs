@@ -1,27 +1,28 @@
 use gpui::{
-    Action, AsKeystroke, FocusHandle, Half, IntoElement, KeyContext, Keystroke, ParentElement as _,
-    RenderOnce, StyleRefinement, Styled, Window, div, prelude::FluentBuilder as _, relative,
+    Action, AsKeystroke, FocusHandle, Half, IntoElement, KeyBinding, KeyContext, Keystroke,
+    ParentElement as _, RenderOnce, StyleRefinement, Styled, Window, div,
+    prelude::FluentBuilder as _, relative,
 };
 
 use crate::{ActiveTheme, StyledExt};
 
 /// A tag for displaying keyboard keybindings.
+///
+/// A multi-keystroke binding (a chord such as `ctrl-k ctrl-o`) is shown in
+/// full, its keystrokes separated by spaces: `Ctrl+K Ctrl+O`.
 #[derive(IntoElement, Clone, Debug)]
 pub struct Kbd {
     style: StyleRefinement,
     stroke: Keystroke,
+    /// The keystrokes after `stroke`, for a chord.
+    rest: Vec<Keystroke>,
     appearance: bool,
     outline: bool,
 }
 
 impl From<Keystroke> for Kbd {
     fn from(stroke: Keystroke) -> Self {
-        Self {
-            style: StyleRefinement::default(),
-            stroke,
-            appearance: true,
-            outline: false,
-        }
+        Self::new(stroke)
     }
 }
 
@@ -31,9 +32,23 @@ impl Kbd {
         Self {
             style: StyleRefinement::default(),
             stroke,
+            rest: Vec::new(),
             appearance: true,
             outline: false,
         }
+    }
+
+    /// Create a Kbd element for a chord, e.g. `ctrl-k ctrl-o`. Returns `None`
+    /// when `strokes` is empty.
+    pub fn chord(strokes: impl IntoIterator<Item = Keystroke>) -> Option<Self> {
+        let mut strokes = strokes.into_iter();
+        let mut kbd = Self::new(strokes.next()?);
+        kbd.rest = strokes.collect();
+        Some(kbd)
+    }
+
+    fn from_binding(binding: &KeyBinding) -> Option<Self> {
+        Self::chord(binding.keystrokes().iter().map(|k| k.as_keystroke().clone()))
     }
 
     /// Set the appearance of the keybinding, default is `true`.
@@ -48,7 +63,8 @@ impl Kbd {
         self
     }
 
-    /// Return the first keybinding for the given action and context.
+    /// Return the highest-precedence keybinding for the given action and
+    /// context, with every keystroke of a chord.
     pub fn binding_for_action(
         action: &dyn Action,
         context: Option<&str>,
@@ -61,26 +77,27 @@ impl Kbd {
             }
             None => window.highest_precedence_binding_for_action(action),
         }?;
-
-        if let Some(key) = binding.keystrokes().first() {
-            Some(Self::new(key.as_keystroke().clone()))
-        } else {
-            None
-        }
+        Self::from_binding(&binding)
     }
 
-    /// Return the first keybinding for the given action and focus handle.
+    /// Return the highest-precedence keybinding for the given action and
+    /// focus handle, with every keystroke of a chord.
     pub fn binding_for_action_in(
         action: &dyn Action,
         focus_handle: &FocusHandle,
         window: &Window,
     ) -> Option<Self> {
         let binding = window.highest_precedence_binding_for_action_in(action, focus_handle)?;
-        if let Some(key) = binding.keystrokes().first() {
-            Some(Self::new(key.as_keystroke().clone()))
-        } else {
-            None
-        }
+        Self::from_binding(&binding)
+    }
+
+    /// The whole binding as text, keystrokes separated by spaces.
+    fn label(&self) -> String {
+        std::iter::once(&self.stroke)
+            .chain(&self.rest)
+            .map(Self::format)
+            .collect::<Vec<_>>()
+            .join(" ")
     }
 
     /// Return the Platform specific keybinding string by KeyStroke
@@ -217,7 +234,7 @@ impl Styled for Kbd {
 impl RenderOnce for Kbd {
     fn render(self, _: &mut gpui::Window, cx: &mut gpui::App) -> impl gpui::IntoElement {
         if !self.appearance {
-            return Self::format(&self.stroke).into_any_element();
+            return self.label().into_any_element();
         }
 
         div()
@@ -238,13 +255,27 @@ impl RenderOnce for Kbd {
             .whitespace_normal()
             .flex_shrink_0()
             .refine_style(&self.style)
-            .child(Self::format(&self.stroke))
+            .child(self.label())
             .into_any_element()
     }
 }
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn test_chord_label() {
+        use super::Kbd;
+        use gpui::Keystroke;
+
+        let parse = |s: &str| Keystroke::parse(s).unwrap();
+        assert!(Kbd::chord(Vec::new()).is_none());
+        assert_eq!(Kbd::new(parse("ctrl-w")).label(), Kbd::format(&parse("ctrl-w")));
+
+        let chord = Kbd::chord([parse("ctrl-k"), parse("ctrl-o")]).unwrap();
+        let expected = format!("{} {}", Kbd::format(&parse("ctrl-k")), Kbd::format(&parse("ctrl-o")));
+        assert_eq!(chord.label(), expected);
+    }
+
     #[test]
     fn test_format() {
         use super::Kbd;
