@@ -16,7 +16,7 @@ doctest = false
 
 [dependencies]
 gpui = { workspace = true, features = ["profiler"] }
-instant.workspace = true
+web-time.workspace = true
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 sysinfo = "0.37"

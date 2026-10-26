@@ -3,7 +3,7 @@ use gpui::{
     Animation, AnimationExt, IntoElement, RenderOnce, StyleRefinement, Styled, bounce, div,
     ease_in_out,
 };
-use instant::Duration;
+use std::time::Duration;
 
 /// A skeleton loading placeholder element.
 #[derive(IntoElement)]

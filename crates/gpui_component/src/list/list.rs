@@ -1,4 +1,4 @@
-use instant::Duration;
+use std::time::Duration;
 use std::ops::Range;
 
 use crate::actions::{Cancel, Confirm, SelectDown, SelectUp};

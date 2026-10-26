@@ -6,7 +6,7 @@ use gpui::{
     Pixels, RenderOnce, StyleRefinement, Styled, Window, canvas, ease_in_out, px, relative,
 };
 use gpui_base::Progress as BaseProgress;
-use instant::Duration;
+use std::time::Duration;
 use std::f32::consts::TAU;
 
 use super::ProgressState;

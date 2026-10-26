@@ -5,7 +5,7 @@ use gpui::{
     prelude::FluentBuilder, px, relative,
 };
 use gpui_base::{Progress as BaseProgress, ProgressIndicator, ProgressTrack};
-use instant::Duration;
+use std::time::Duration;
 
 use super::ProgressState;
 
