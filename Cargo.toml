@@ -53,7 +53,21 @@ gpui_util = { path = "crates/gpui_util/" }
 hdrhistogram = { version = "7", default-features = false }
 heapless = "0.9.2"
 http_client = { path = "crates/http_client/" }
-image   = "0.25.10"
+# Only the formats gpui's ImageFormat handles (SVG goes through resvg). The
+# defaults also pull in OpenEXR (exr -> pulp -> paste, unmaintained) and the
+# AVIF encoder (rav1e), which gpui doesn't use. No `rayon` either: gpui
+# doesn't use image's parallel pixel iterators, and its weak `exr?/rayon` and
+# `ravif?/threading` features make Cargo record those crates in the lock file.
+image   = { version = "0.25.10", default-features = false, features = [
+    "png",
+    "jpeg",
+    "webp",
+    "gif",
+    "bmp",
+    "tiff",
+    "ico",
+    "pnm",
+] }
 inventory = "0.3.19"
 itertools = "0.14.0"
 log = { version = "0.4", default-features = false, features = ["std"] }
