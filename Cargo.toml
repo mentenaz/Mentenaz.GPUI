@@ -22,7 +22,7 @@ members = [
     "crates/gpui_wgpu",
     "crates/gpui_windows",
     "crates/http_client/",
-    "crates/http_client_tls/", "crates/util","crates/app_names/"
+    "crates/http_client_tls/", "crates/util","crates/app_names/", "crates/paths"
 ]
 [workspace.package]
 version = "0.1.0"
@@ -342,7 +342,10 @@ sha2 = "0.10"
 util = { path = "crates/util" }
 app_names = { path = "crates/app_names/" }
 globset = "0.4"
+const_format = "0.2"
+ignore = "0.4.22"
 path = { path = "crates/path/" }
+paths = { path = "crates/paths" }
 percent-encoding = "2.3.2"
 rust-embed = { version = "8.11", features = ["include-exclude", "compression"] }
 serde_json_lenient = { version = "0.2", features = [
